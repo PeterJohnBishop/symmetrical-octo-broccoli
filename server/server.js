@@ -5,6 +5,7 @@ const cors = require('cors');
 const app = express();
 const http = require('http'); // Import HTTP module to work with Socket.IO
 const { Server } = require('socket.io');
+const validateFirebaseToken = require('./utils/validate.js');
 
 dotenv.config();
 
@@ -31,6 +32,12 @@ const corsOptions = {
 app.use(bodyParser.json());
 app.use(cors());
 app.use(cors(corsOptions));
+
+app.use(validateFirebaseToken);
+
+app.post("/test-secured-endpoint", validateFirebaseToken, (req, res) => {
+  res.status(200).json({ message: "Authorized request", user: req.user });
+});
 
 app.get('/', (req, res) => {
     res.send('Welcome to Symmetrical Server!');
