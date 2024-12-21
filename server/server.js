@@ -5,7 +5,7 @@ const cors = require('cors');
 const app = express();
 const http = require('http'); // Import HTTP module to work with Socket.IO
 const { Server } = require('socket.io');
-const validateFirebaseToken = require('./utils/validate.js');
+const validateFirebaseToken = require('./utils/validate.js')
 
 dotenv.config();
 
