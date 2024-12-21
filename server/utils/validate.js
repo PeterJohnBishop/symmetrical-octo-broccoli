@@ -1,5 +1,5 @@
 const admin = require("firebase-admin");
-const serviceAccount = require("./symmetrical-octo-firebase-adminsdk-bzm7q-8308e3a31c");
+const serviceAccount = require("./symmetrical-octo-firebase-adminsdk-bzm7q-8308e3a31c.json");
 
 if (!admin.apps.length) {
   admin.initializeApp({
