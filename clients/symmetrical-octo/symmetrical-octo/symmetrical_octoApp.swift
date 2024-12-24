@@ -36,7 +36,7 @@ struct symmetrical_octoApp: App {
 
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            AuthView()
         }
         .modelContainer(sharedModelContainer)
     }
