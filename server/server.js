@@ -13,7 +13,7 @@ const PORT = process.env.PORT;
 
 const allowedOrigins = [
     /^http:\/\/localhost(:\d+)?$/, //localhost:allports
-    "https://rocky-bastion-37141-322a4508bb50.herokuapp.com/"
+    process.env.BASE_URL
 ];
 
 const corsOptions = {
