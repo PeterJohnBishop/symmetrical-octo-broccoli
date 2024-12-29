@@ -6,6 +6,7 @@ const app = express();
 const http = require('http'); // Import HTTP module to work with Socket.IO
 const { Server } = require('socket.io');
 const validateFirebaseToken = require('./utils/validate.js')
+const GeminiRoutes = require('./routes/GeminiRoutes.js');
 
 dotenv.config();
 
@@ -33,7 +34,7 @@ app.use(bodyParser.json());
 app.use(cors());
 app.use(cors(corsOptions));
 
-app.use(validateFirebaseToken);
+//app.use(validateFirebaseToken);
 
 app.post("/test-secured-endpoint", validateFirebaseToken, (req, res) => {
   res.status(200).json({ message: "Authorized request", user: req.user });
@@ -42,6 +43,8 @@ app.post("/test-secured-endpoint", validateFirebaseToken, (req, res) => {
 app.get('/', (req, res) => {
     res.send('Welcome to Symmetrical Server!');
   });
+
+app.use('/gemini', GeminiRoutes)
 
 const server = http.createServer(app);
 const io = new Server(server, {

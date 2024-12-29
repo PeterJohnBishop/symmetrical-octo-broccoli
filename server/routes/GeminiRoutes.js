@@ -2,7 +2,9 @@ const router = require("express").Router();
 const validateFirebaseToken = require('../utils/validate.js');
 const { gemini15Flash, googleAI } = require('@genkit-ai/googleai');
 const { genkit } = require('genkit');
-const axios = require('axios');
+const { z } = require("zod");
+const axios = require("axios");
+const { schema } = require("../../../literate-meme/server/models/PostModel.js");
 
 // Configure a Genkit instance
 const ai = genkit({
@@ -10,52 +12,57 @@ const ai = genkit({
   model: gemini15Flash, // Set default model
 });
 
-const helloFlow = ai.defineFlow('helloFlow', (name) => {
-  return ai.generate(`Hello Gemini, my name is ${name}`);
+// Create a ClickUp Task | Start
+
+const responseSchema = z.object({
+  list: z.string(),
+  name: z.string(),
+  description: z.string(),
+  startDate: z.string(),
+  dueDate: z.string(),
+  missing: z.array(z.string()),
 });
 
-router.post("/test", async (req, res) => {
-  const data = { name: req.body.name };
-
-  // Validate input
-  if (!data.name) {
-    return res.status(400).json({ success: false, message: "Name is required" });
+const createTaskFLow = ai.defineFlow(
+  {
+    name: 'createTaskFLow',
+    inputSchema: z.string(),
+    outputSchema: responseSchema,
+  },
+  async (input) => {
+    const { output } = await ai.generate({
+      model: gemini15Flash,
+      prompt: `Evaluate this input: ${input} and if it contains values list name, task name, task description, start date and/or due date, assign them to the corresponding variables in a JSON object. If any of the values are null, list the 
+      missing values in the missing array`,
+      output: {
+        schema: responseSchema,
+      },
+    });
+    if (output == null) {
+      throw new Error("Response doesn't satisfy schema.");
+    }
+    return output;
   }
+);
+
+router.post("/clickupTask", async (req, res) => {
+
+  const input = req.body.task;
 
   try {
-    const response = await helloFlow(data.name);
-    console.log(response);
-    res.status(200).json({ success: true, data: response });
-  } catch (err) {
-    console.error("Error in helloFlow:", err);
-    res.status(500).json({ success: false, error: "Internal Server Error" });
+    const response = await createTaskFLow(input);
+    res.status(200).json(response);
   }
+  catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+
 });
+
+// Create a ClickUp Task | End
+
+
 
 module.exports = router;
 
-// example with response schema
 
-// const MenuItemSchema = z.object({
-//   dishname: z.string(),
-//   description: z.string(),
-// });
-
-// export const menuSuggestionFlowWithSchema = ai.defineFlow(
-//   {
-//     name: 'menuSuggestionFlow',
-//     inputSchema: z.string(),
-//     outputSchema: MenuItemSchema,
-//   },
-//   async (restaurantTheme) => {
-//     const { output } = await ai.generate({
-//       model: gemini15Flash,
-//       prompt: `Invent a menu item for a ${restaurantTheme} themed restaurant.`,
-//       output: { schema: MenuItemSchema },
-//     });
-//     if (output == null) {
-//       throw new Error("Response doesn't satisfy schema.");
-//     }
-//     return output;
-//   }
-// );
