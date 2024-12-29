@@ -14,7 +14,8 @@ const PORT = process.env.PORT;
 
 const allowedOrigins = [
     /^http:\/\/localhost(:\d+)?$/, //localhost:allports
-    process.env.BASE_URL
+    process.env.BASE_URL,
+    "http://192.168.0.134:8080"
 ];
 
 const corsOptions = {
@@ -34,7 +35,7 @@ app.use(bodyParser.json());
 app.use(cors());
 app.use(cors(corsOptions));
 
-//app.use(validateFirebaseToken);
+app.use(validateFirebaseToken);
 
 app.post("/test-secured-endpoint", validateFirebaseToken, (req, res) => {
   res.status(200).json({ message: "Authorized request", user: req.user });

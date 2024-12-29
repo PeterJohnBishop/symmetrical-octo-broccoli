@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct AuthView: View {
+    
     @State private var newUser: Bool = false
     @State private var authentication: FireAuthViewModel = FireAuthViewModel()
     @State private var email: String = ""

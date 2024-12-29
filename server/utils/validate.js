@@ -1,5 +1,6 @@
 const admin = require("firebase-admin");
-const serviceAccount = require('./symmetrical-octo-firebase-adminsdk-bzm7q-8308e3a31c.json');
+// const serviceAccount = require('./symmetrical-octo-firebase-adminsdk-bzm7q-8308e3a31c.json');
+require('dotenv').config(); 
 
 if (!admin.apps.length) {
   admin.initializeApp({
@@ -7,7 +8,7 @@ if (!admin.apps.length) {
       "type": "service_account",
       "project_id": "symmetrical-octo",
       "private_key_id": process.env.PRIVATE_KEY_ID,
-      "private_key": process.env.PRIVATE_KEY,
+      "private_key": process.env.PRIVATE_KEY.replace(/\\n/g, '\n'),
       "client_email": process.env.CLIENT_EMAIL,
       "client_id": process.env.CLIENT_ID,
       "auth_uri": "https://accounts.google.com/o/oauth2/auth",
@@ -20,22 +21,17 @@ if (!admin.apps.length) {
 }
 
 const validateFirebaseToken = async (req, res, next) => {
-  const authorization = req.headers.authorization;
-
-  if (!authorization || !authorization.startsWith("Bearer ")) {
+  const token = req.headers.authorization?.split("Bearer ")[1];
+  if (!token) {
     return res.status(403).json({ error: "Unauthorized" });
   }
-
-  const idToken = authorization.split("Bearer ")[1];
-
   try {
-    const decodedToken = await admin.auth().verifyIdToken(idToken);
-    console.log("Decoded Token:", decodedToken);
-    req.user = decodedToken; // Attach the user info to the request object
-    next(); 
+    const decodedToken = await admin.auth().verifyIdToken(token);
+    req.user = decodedToken;
+    console.log("Authenticated User:", decodedToken); // Debug log
+    next();
   } catch (error) {
-    console.error("Error verifying ID token:", error);
-    res.status(403).json({ error: "Unauthorized" });
+    res.status(403).json({ error: "Unauthorized", details: error.message });
   }
 };
 
