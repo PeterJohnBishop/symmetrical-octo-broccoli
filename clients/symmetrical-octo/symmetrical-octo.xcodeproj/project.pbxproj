@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B141EEEA2D22846E00329D1B /* FirebaseFirestoreCombine-Community in Frameworks */ = {isa = PBXBuildFile; productRef = B141EEE92D22846E00329D1B /* FirebaseFirestoreCombine-Community */; };
 		B184882A2D176E5D00782485 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = B18488292D176E5D00782485 /* FirebaseAuth */; };
 		B184882C2D176E5D00782485 /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = B184882B2D176E5D00782485 /* FirebaseCore */; };
 		B184882E2D176E5D00782485 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = B184882D2D176E5D00782485 /* FirebaseFirestore */; };
@@ -38,6 +39,7 @@
 				B184882A2D176E5D00782485 /* FirebaseAuth in Frameworks */,
 				B184882E2D176E5D00782485 /* FirebaseFirestore in Frameworks */,
 				B18488352D176E7C00782485 /* SocketIO in Frameworks */,
+				B141EEEA2D22846E00329D1B /* FirebaseFirestoreCombine-Community in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -86,6 +88,7 @@
 				B184882F2D176E5D00782485 /* FirebaseStorage */,
 				B18488312D176E5D00782485 /* FirebaseVertexAI */,
 				B18488342D176E7C00782485 /* SocketIO */,
+				B141EEE92D22846E00329D1B /* FirebaseFirestoreCombine-Community */,
 			);
 			productName = "symmetrical-octo";
 			productReference = B18488132D176CDB00782485 /* symmetrical-octo.app */;
@@ -370,6 +373,10 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		B141EEE92D22846E00329D1B /* FirebaseFirestoreCombine-Community */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = "FirebaseFirestoreCombine-Community";
+		};
 		B18488292D176E5D00782485 /* FirebaseAuth */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = B18488282D176E5D00782485 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;

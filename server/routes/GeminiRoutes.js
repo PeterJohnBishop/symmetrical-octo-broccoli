@@ -52,16 +52,14 @@ router.post("/askBasic", validateFirebaseToken, async (req, res) => {
 });
 
 router.post("/transcript/add", validateFirebaseToken, async (req, res) => {
-  console.log("Request Headers:", req.headers);
-  console.log("Request Body:", req.body);
-  const { message, sender, timestamp, gemini } = req.body
+  const { query, user, timestamp, reply } = req.body
   const db = admin.firestore();
 
   db.collection("transcripts").add({
-    message: message,
-    sender: sender,
+    query: query,
+    user: user,
     timestamp: timestamp,
-    gemini: gemini
+    reply: reply
   })
   .then((docRef) => {
       res.status(200).json({ message: "Saved", id: docRef.id });
@@ -73,28 +71,32 @@ router.post("/transcript/add", validateFirebaseToken, async (req, res) => {
 
 });
 
-router.post("/transcript/get/:id", validateFirebaseToken, async (req, res) => {
-  const { id } = req.params;
+router.post("/transcript/get", validateFirebaseToken, async (req, res) => {
   const db = admin.firestore();
 
-  db.collection(id).get()
+  db.collection("transcripts")
+  .get()
   .then((querySnapshot) => {
-    const data = [];
-    querySnapshot.forEach((doc) => {
-      data.push(doc.data());
-    });
+    // Map through querySnapshot to construct the data array
+    const data = querySnapshot.docs.map((doc) => ({
+      id: doc.id, // Include the document ID
+      ...doc.data(), // Include the document data
+    }));
+
+    // Send the data array in the response
     res.status(200).json(data);
   })
   .catch((error) => {
+    // Handle and return the error
     res.status(400).json({ code: error.code, error: error.message });
   });
 });
 
-router.post("/transcript/:id/:docId", validateFirebaseToken, async (req, res) => {
-  const { id, docId } = req.params;
+router.post("/transcript/delete/:docId", validateFirebaseToken, async (req, res) => {
+  const { docId } = req.params;
   const db = admin.firestore();
   
-  db.collection(id).doc(docId).delete()
+  db.collection("transcripts").doc(docId).delete()
   .then(() => {
     res.status(200).json({ message: "Document successfully deleted!" });
   })

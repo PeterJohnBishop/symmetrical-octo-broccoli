@@ -48,14 +48,22 @@ import Observation
             
             // Debug raw response for troubleshooting
             let responseString = String(data: data, encoding: .utf8) ?? "Invalid response"
-            print("Raw response string:", responseString)
-            
             if let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 {
                 do {
                     let decoder = JSONDecoder()
-                    let geminiResponse = try decoder.decode(GeminiResponse.self, from: data)
-                    self.reply = geminiResponse.reply
-                    return (true, geminiResponse.reply)
+                    
+                    // Decode the response as a simple dictionary
+                    let responseObject = try decoder.decode([String: String].self, from: data)
+                    
+                    if let reply = responseObject["reply"] {
+                        self.reply = reply
+                        return (true, reply)
+                    } else {
+                        let errorMessage = "Error: 'reply' key not found in response."
+                        print(errorMessage)
+                        self.reply = errorMessage
+                        return (false, errorMessage)
+                    }
                 } catch {
                     let errorMessage = "Error decoding JSON: \(error.localizedDescription)"
                     print(errorMessage)

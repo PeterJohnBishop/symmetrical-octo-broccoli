@@ -11,25 +11,19 @@ import FirebaseCore
 struct MainView: View {
     
     @State private var authentication: FireAuthViewModel = FireAuthViewModel()
-    @State private var gemini: GeminiAIViewModel = GeminiAIViewModel()
-    @State private var messageViewModel: MessageViewModel = MessageViewModel()
+    @State private var geminiAI: GeminiAIViewModel = GeminiAIViewModel()
+    @State private var gemini: GeminiViewModel = GeminiViewModel()
     @State private var userLoaded: Bool = false
     @State private var ask: String = ""
     @State private var authToken: String = ""
+    @State var update: Bool = false
 
     
     var body: some View {
         VStack{
             if let currentUser = authentication.user {
-                Text(currentUser.uid)
-                Text(currentUser.email ?? "Email not found.")
-                Spacer()
-                if !gemini.reply.isEmpty {
-                    GroupBox("Gemini", content: {
-                        Text(gemini.reply)
-                    })
-                }
-                TextField("Ask Gemini", text: $gemini.query)
+                GeminiTranscriptView(update: $update)
+                TextField("Ask Gemini", text: $geminiAI.query)
                     .tint(.black)
                     .autocapitalization(.none)
                     .disableAutocorrection(true)
@@ -37,17 +31,19 @@ struct MainView: View {
                 Button {
                     Task {
                         do {
-                            let (ask, reply) = try await gemini.askGeminiBasic()
+                            let (ask, reply) = try await geminiAI.askGeminiBasic()
                             if ask {
-                                messageViewModel.message.message = gemini.query
-                                messageViewModel.message.sender = authentication.user!.uid
+                                gemini.gemini.query = geminiAI.query
+                                gemini.gemini.user = authentication.user!.uid
                                 let currentDate = Date()
-                                messageViewModel.message.timestamp = Timestamp(date: currentDate)
-                                messageViewModel.message.gemini = reply
-                                let (success, response) = try await messageViewModel.saveMessage()
+                                gemini.gemini.timestamp = Timestamp(date: currentDate)
+                                gemini.gemini.reply = reply
+                                let (success, response) = try await gemini.saveTranscript()
+                                update = success
+                                geminiAI.query = ""
                                 if !success {
-                                    print(response)
-                                }
+                                    print("Error saving: \(response)")
+                                } 
                             }
                         } catch {
                             print("Error: \(error.localizedDescription)")
@@ -78,6 +74,7 @@ struct MainView: View {
                         } else {
                             UserDefaults.standard.set(token, forKey: "auth")
                             authToken = UserDefaults.standard.string(forKey: "auth") ?? "Token Not Found"
+                            update = true
                         }
                     })
                 }
