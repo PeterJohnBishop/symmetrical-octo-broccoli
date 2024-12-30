@@ -43,7 +43,7 @@ struct MainView: View {
                                 messageViewModel.message.sender = authentication.user!.uid
                                 let currentDate = Date()
                                 messageViewModel.message.timestamp = Timestamp(date: currentDate)
-                                messageViewModel.message.gemini = false
+                                messageViewModel.message.gemini = reply
                                 let (success, response) = try await messageViewModel.saveMessage()
                                 if !success {
                                     print(response)

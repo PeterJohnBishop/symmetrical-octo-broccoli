@@ -13,14 +13,14 @@ struct Message: Identifiable, Codable, Equatable {
     var message: String
     var sender: String
     var timestamp: Timestamp
-    var gemini: Bool
+    var gemini: String
 
     init(
         id: String? = nil,
         message: String = "",
         sender: String = "",
         timestamp: Timestamp = Timestamp(),
-        gemini: Bool = false
+        gemini: String = ""
     ) {
         self.id = id
         self.message = message
