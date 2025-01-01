@@ -7,6 +7,7 @@ const http = require('http'); // Import HTTP module to work with Socket.IO
 const { Server } = require('socket.io');
 const validateFirebaseToken = require('./utils/validate.js')
 const GeminiRoutes = require('./routes/GeminiRoutes.js');
+const PostRoutes = require('./routes/PostRoutes.js');
 
 dotenv.config();
 
@@ -15,7 +16,8 @@ const PORT = process.env.PORT;
 const allowedOrigins = [
     /^http:\/\/localhost(:\d+)?$/, //localhost:allports
     process.env.BASE_URL,
-    "http://192.168.0.134:8080"
+    "http://192.168.0.134:8080",
+    "http://192.168.0.134:3000"
 ];
 
 const corsOptions = {
@@ -45,7 +47,8 @@ app.get('/', (req, res) => {
     res.send('Welcome to Symmetrical Server!');
   });
 
-app.use('/gemini', GeminiRoutes)
+app.use('/gemini', GeminiRoutes);
+app.use('/posts', PostRoutes);
 
 const server = http.createServer(app);
 const io = new Server(server, {

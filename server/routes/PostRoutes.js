@@ -130,3 +130,5 @@ router.post("/comment/delete", validateFirebaseToken, async (req, res) => {
     });
     
 });
+
+exports.router = router;

@@ -5,10 +5,16 @@
   "dependencies": {
     "bootstrap": "^5.3.3",
     "cra-template": "1.2.0",
+    "firebase": "^11.1.0",
+    "fs": "^0.0.1-security",
+    "os": "^0.1.2",
+    "path-browserify": "^1.0.1",
     "react": "^19.0.0",
     "react-bootstrap": "^2.10.7",
     "react-dom": "^19.0.0",
-    "react-scripts": "5.0.1"
+    "react-scripts": "5.0.1",
+    "run": "^1.5.0",
+    "start": "^5.1.0"
   },
   "scripts": {
     "start": "react-scripts start",
