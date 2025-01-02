@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Form, Button, Container, Row, Col } from 'react-bootstrap';
 import firebase from './firebase';
+import MainPost from '../Main/MainPost';
 
 const Login = () => {
     const [email, setEmail] = useState('');
@@ -68,6 +69,7 @@ const Login = () => {
 
     return (
         <Container>
+            {success ? <MainPost/> : 
             <Row className="justify-content-md-center">
                 <Col md={6}>
                     <Form onSubmit={handleSubmit}>
@@ -105,6 +107,7 @@ const Login = () => {
                     </Form>
                 </Col>
             </Row>
+}
         </Container>
     );
 };

@@ -1,5 +1,6 @@
 const admin = require("firebase-admin");
 // const serviceAccount = require('./symmetrical-octo-firebase-adminsdk-bzm7q-8308e3a31c.json');
+const axios = require("axios"); 
 require('dotenv').config(); 
 
 if (!admin.apps.length) {
@@ -34,5 +35,32 @@ const validateFirebaseToken = async (req, res, next) => {
     res.status(403).json({ error: "Unauthorized", details: error.message });
   }
 };
+
+router.post("/refresh-token", async (req, res) => {
+  const refreshFirebaseTokenUrl = `https://securetoken.googleapis.com/v1/token?key=${process.env.API_KEY}`;
+  const { refreshToken } = req.body;
+
+  if (!refreshToken) {
+    return res.status(400).send({ error: "Refresh token is required." });
+  }
+
+  try {
+    const response = await axios.post(FIREBASE_REFRESH_TOKEN_URL, {
+      grant_type: "refresh_token",
+      refresh_token: refreshToken,
+    });
+
+    const { id_token: newIdToken, refresh_token: newRefreshToken, expires_in: expiresIn } = response.data;
+
+    res.status(200).send({
+      idToken: newIdToken,
+      refreshToken: newRefreshToken,
+      expiresIn, // Token lifetime in seconds
+    });
+  } catch (error) {
+    console.error("Error refreshing token:", error.response?.data || error.message);
+    res.status(500).send({ error: "Failed to refresh token." });
+  }
+});
 
 module.exports = validateFirebaseToken;
